@@ -216,6 +216,30 @@ class TestProductModel(unittest.TestCase):
         """It should raise error while updating"""
         product = ProductFactory()
         product.id = None
-        product.update()
+        product.create()
+        self.assertIsNotNone(product.id)
+        # Updating description and changing id to None
+        product.description = "Catwomen"
+        product.id = None
+        self.assertRaises(DataValidationError, product.update)
 
+    def test_from_dictionary(self):
+        """Testing creating product from dictionary"""
+        # Data for the product
+        data = {
+            "id" : None,
+            "name" : "Kiwi",
+            "price" : "2.56",
+            "description" : "Fruit with green flesh and skin",
+            "available" : True,
+            "category" : "FOOD"
+        }
 
+        product = Product()
+        product.deserialize(data)
+        product.create()
+        found  = Product.find_by_name("kiwi")
+        for product in found:
+            self.assertIsNotNone(product.id)
+            self.assertEqual(product.name, data["name"])
+            self.assertEqual(product.description, data["description"])

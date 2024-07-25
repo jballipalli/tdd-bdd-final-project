@@ -167,6 +167,24 @@ class TestProductRoutes(TestCase):
     # ADD YOUR TEST CASES HERE
     #
 
+    def test_get_product(self):
+        """It should GET a single product"""
+
+        test_product = self._create_products(1)[0]
+        response = self.client.get(f'{BASE_URL}/{test_product.id}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(test_product.name, data["name"])
+        self.assertEqual(test_product.description, data["description"])
+        self.assertEqual(str(test_product.price), data["price"])
+        self.assertEqual(test_product.available, data["available"])
+
+    def test_get_product_not_found(self):
+        """It should GET request with invalid ID"""
+
+        response = self.client.get(f"{BASE_URL}/023")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     ######################################################################
     # Utility functions
     ######################################################################

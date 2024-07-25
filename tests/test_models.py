@@ -227,18 +227,18 @@ class TestProductModel(unittest.TestCase):
         """Testing creating product from dictionary"""
         # Data for the product
         data = {
-            "id" : None,
-            "name" : "Kiwi",
-            "price" : "2.56",
-            "description" : "Fruit with green flesh and skin",
-            "available" : True,
-            "category" : "FOOD"
+            "id": None,
+            "name": "Kiwi",
+            "price": "2.56",
+            "description": "Fruit with green flesh and skin",
+            "available": True,
+            "category": "FOOD"
         }
 
         product = Product()
         product.deserialize(data)
         product.create()
-        found  = Product.find_by_name("kiwi")
+        found = Product.find_by_name("kiwi")
         for product in found:
             self.assertIsNotNone(product.id)
             self.assertEqual(product.name, data["name"])
@@ -247,33 +247,35 @@ class TestProductModel(unittest.TestCase):
     def test_from_dictionary_errors(self):
         """Must raise error with invalid input"""
         data = {
-            "name" : "screw",
-            "description" : "Bolted into the things",
-            "price" : 0.65,
-            "available" : 3,
-            "category" : "TOOLS"
+            "name": "screw",
+            "description": "Bolted into the things",
+            "price": 0.65,
+            "available": 3,
+            "category": "TOOLS"
         }
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data)
 
+        # Attribute Error
         data1 = {
-            "name" : "screw",
-            "description" : "Bolted into the things",
-            "price" : 0.65,
-            "available" : True,
-            "category" : "Tools",
-            "ids" : False
+            "name": "screw",
+            "description": "Bolted into the things",
+            "price": 0.65,
+            "available": True,
+            "category": "Tools",
+            "ids": False
         }
 
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data1)
 
+        # Type Error
         data2 = {
-            "name" : "screw",
-            "description" : "Bolted into the things",
-            "price" : 0.65,
-            "available" : True,
-            "category" : None
+            "name": "screw",
+            "description": "Bolted into the things",
+            "price": 0.65,
+            "available": True,
+            "category": None
         }
 
         product = Product()

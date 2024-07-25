@@ -243,3 +243,38 @@ class TestProductModel(unittest.TestCase):
             self.assertIsNotNone(product.id)
             self.assertEqual(product.name, data["name"])
             self.assertEqual(product.description, data["description"])
+
+    def test_from_dictionary_errors(self):
+        """Must raise error with invalid input"""
+        data = {
+            "name" : "screw",
+            "description" : "Bolted into the things",
+            "price" : 0.65,
+            "available" : 3,
+            "category" : "TOOLS"
+        }
+        product = Product()
+        self.assertRaises(DataValidationError, product.deserialize, data)
+
+        data1 = {
+            "name" : "screw",
+            "description" : "Bolted into the things",
+            "price" : 0.65,
+            "available" : True,
+            "category" : "Tools",
+            "ids" : False
+        }
+
+        product = Product()
+        self.assertRaises(DataValidationError, product.deserialize, data1)
+
+        data2 = {
+            "name" : "screw",
+            "description" : "Bolted into the things",
+            "price" : 0.65,
+            "available" : True,
+            "category" : None
+        }
+
+        product = Product()
+        self.assertRaises(DataValidationError, product.deserialize, data2)

@@ -185,6 +185,29 @@ class TestProductRoutes(TestCase):
         response = self.client.get(f"{BASE_URL}/023")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_update_the_product(self):
+        """It should update the product with given id"""
+
+        test_product = self._create_products(1)[0]
+        response = self.client.get(f"{BASE_URL}/{test_product.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        data["name"] = "Batman"
+        data["description"] = "Action hero created by DC Comics"
+        response = self.client.put(f"{BASE_URL}/{test_product.id}", json=data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get(f"{BASE_URL}/{test_product.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        return_data = response.get_json()
+        self.assertEqual(return_data["name"], data["name"])
+        self.assertEqual(return_data["description"], data["description"])
+
+    def test_failed_update(self):
+        """It should not update with invalid id"""
+        data = ProductFactory()
+        response = self.client.put(f"{BASE_URL}/007", json=data.serialize())
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     ######################################################################
     # Utility functions
     ######################################################################

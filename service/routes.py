@@ -98,9 +98,29 @@ def create_products():
 ######################################################################
 
 @app.route('/products', methods=["GET"])
-def list_all_products():
-    """It should all products in the db"""
-    products = Product.all()
+def list_products():
+    """It should list product/s from the db"""
+
+    name = request.args.get("name")
+    available = request.args.get("available")
+    category = request.args.get("category")
+
+    if name:
+        app.logger.info(f"Request to list products by name: {name}")
+        products = Product.find_by_name(name)
+
+    elif available:
+        app.logger.info(f"Request to list products by availability: {available}")
+        products = Product.find_by_availability(available)
+
+    elif category:
+        app.logger.info(f"Request to list products by category: {category}")
+        products = Product.find_by_category(category)
+
+    else:
+        app.logger.info("Request to list all the products")
+        products = Product.all()
+
     message = [product.serialize() for product in products]
 
     return (jsonify(message), status.HTTP_200_OK)

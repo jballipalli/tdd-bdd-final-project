@@ -28,6 +28,7 @@ import os
 import logging
 from decimal import Decimal
 from unittest import TestCase
+from urllib.parse import quote_plus
 from service import app
 from service.common import status
 from service.models import db, init_db, Product
@@ -231,6 +232,59 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
+
+    def test_list_by_name(self):
+        """It should return all products by given name"""
+        products = self._create_products(5)
+        test_name = products[0].name
+        name_count = len([product for product in products if product.name == test_name])
+        
+        response = self.client.get(
+            BASE_URL, query_string=f"name={quote_plus(test_name)}"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), name_count)
+
+        for product in data:
+            self.assertEqual(product["name"], test_name)
+
+    def test_list_by_availability(self):
+        """It should return all products by given availability"""
+        products = self._create_products(5)
+        test_available = products[0].available
+        avail_count = len([product for product in products if product.available == test_available])
+        
+        response = self.client.get(
+            BASE_URL, query_string=f"available={quote_plus(str(test_available))}"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), avail_count)
+
+        for product in data:
+            self.assertEqual(product["available"], test_available)
+
+    def test_list_by_category(self):
+        """It should return all products by given category"""
+        products = self._create_products(5)
+        test_category = products[0].category
+        category_count = len([product for product in products if product.category == test_category])
+        
+        response = self.client.get(
+            BASE_URL, query_string=f"category={quote_plus(test_category.name)}"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), category_count)
+
+        for product in data:
+            self.assertEqual(product["category"], test_category.name)
+
+
 
     ######################################################################
     # Utility functions

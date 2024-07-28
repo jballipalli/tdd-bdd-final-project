@@ -122,6 +122,7 @@ def get_products(product_id):
 # U P D A T E   A   P R O D U C T
 ######################################################################
 
+
 @app.route("/products/<product_id>", methods=["PUT"])
 def update_product(product_id):
     """Must update the product information"""
@@ -132,7 +133,7 @@ def update_product(product_id):
     product = Product.find(product_id)
     if not product:
         message = {
-            "message" : f"Requested product with id {product_id} was not found."
+            "message": f"Requested product with id {product_id} was not found."
         }
         abort(status.HTTP_404_NOT_FOUND, jsonify(message))
 

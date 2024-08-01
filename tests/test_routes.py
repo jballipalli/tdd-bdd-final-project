@@ -166,7 +166,7 @@ class TestProductRoutes(TestCase):
     #
 
     def test_get_product(self):
-        """It should GET a single product"""
+        """It should GET/READ a single product"""
 
         test_product = self._create_products(1)[0]
         response = self.client.get(f'{BASE_URL}/{test_product.id}')
